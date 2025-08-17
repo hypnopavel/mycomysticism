@@ -3,9 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MYCOMYSTICISM - Spiritual Development Portal</title>
-    <link rel="manifest" href="manifest.json">
+    <title>MYCOMYSTICISM - Advanced Analytics Portal</title>
     <meta name="theme-color" content="#667eea">
+    
+    <!-- Chart.js Library -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
     <style>
         * {
             margin: 0;
@@ -35,6 +38,18 @@
             width: 100%;
             max-width: 400px;
             box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: slideUp 0.5s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .login-header {
@@ -45,17 +60,18 @@
         .login-header .logo {
             font-size: 60px;
             margin-bottom: 20px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
         }
 
         .login-header h1 {
             font-size: 24px;
             color: #1a1a2e;
             margin-bottom: 10px;
-        }
-
-        .login-header p {
-            color: #666;
-            font-size: 14px;
         }
 
         .form-group {
@@ -70,7 +86,7 @@
             font-weight: 500;
         }
 
-        .form-group input {
+        .form-group input, .form-group select {
             width: 100%;
             padding: 12px 15px;
             border: 2px solid #e0e0e0;
@@ -103,22 +119,15 @@
             box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
         }
 
-        .form-footer {
-            text-align: center;
-            margin-top: 20px;
-            color: #666;
-            font-size: 14px;
-        }
-
-        .form-footer a {
-            color: #667eea;
-            text-decoration: none;
-            font-weight: 500;
-        }
-
-        /* Dashboard (hidden by default) */
+        /* Dashboard */
         #dashboard {
             display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
 
         .container {
@@ -140,6 +149,23 @@
             color: white;
             padding: 30px;
             position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: rotate 30s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
         }
 
         .header-content {
@@ -148,13 +174,8 @@
             align-items: center;
             flex-wrap: wrap;
             gap: 20px;
-        }
-
-        .header h1 {
-            font-size: 24px;
-            display: flex;
-            align-items: center;
-            gap: 15px;
+            position: relative;
+            z-index: 1;
         }
 
         .user-info {
@@ -182,11 +203,6 @@
             border-radius: 20px;
             cursor: pointer;
             transition: all 0.3s;
-            font-size: 14px;
-        }
-
-        .logout-btn:hover {
-            background: rgba(244, 67, 54, 0.3);
         }
 
         /* Dashboard Content */
@@ -195,103 +211,211 @@
             background: #f8f9fa;
         }
 
-        /* Stats Grid */
-        .stats-grid {
+        /* KPI Cards */
+        .kpi-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 20px;
             margin-bottom: 30px;
         }
 
-        .stat-card {
+        .kpi-card {
             background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            position: relative;
+            overflow: hidden;
             transition: all 0.3s;
         }
 
-        .stat-card:hover {
+        .kpi-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
         }
 
-        .stat-icon {
-            font-size: 30px;
-            margin-bottom: 10px;
+        .kpi-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(180deg, #667eea, #764ba2);
         }
 
-        .stat-label {
+        .kpi-icon {
+            font-size: 40px;
+            margin-bottom: 15px;
+        }
+
+        .kpi-label {
             font-size: 12px;
             color: #666;
             text-transform: uppercase;
             letter-spacing: 1px;
-            margin-bottom: 5px;
+            margin-bottom: 10px;
         }
 
-        .stat-value {
-            font-size: 24px;
+        .kpi-value {
+            font-size: 32px;
             font-weight: bold;
             color: #1a1a2e;
+            margin-bottom: 10px;
         }
 
-        .stat-progress {
+        .kpi-change {
             font-size: 14px;
-            color: #667eea;
-            margin-top: 5px;
-        }
-
-        /* Progress Section */
-        .progress-section {
-            background: white;
-            padding: 25px;
-            border-radius: 10px;
-            margin-bottom: 30px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-
-        .progress-section h3 {
-            font-size: 18px;
-            margin-bottom: 20px;
-            color: #1a1a2e;
-        }
-
-        .progress-item {
-            margin-bottom: 20px;
-        }
-
-        .progress-header {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 8px;
-            font-size: 14px;
-        }
-
-        .progress-bar-container {
-            height: 25px;
-            background: #e0e0e0;
-            border-radius: 12px;
-            overflow: hidden;
-        }
-
-        .progress-bar {
-            height: 100%;
-            background: linear-gradient(90deg, #667eea, #764ba2);
-            border-radius: 12px;
-            transition: width 1s ease;
             display: flex;
             align-items: center;
-            justify-content: flex-end;
-            padding-right: 10px;
-            color: white;
-            font-size: 12px;
-            font-weight: bold;
+            gap: 5px;
         }
 
-        /* Actions Grid */
+        .kpi-change.positive {
+            color: #27ae60;
+        }
+
+        .kpi-change.negative {
+            color: #e74c3c;
+        }
+
+        /* Charts Section */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .chart-container {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .chart-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1a1a2e;
+        }
+
+        .chart-filters {
+            display: flex;
+            gap: 10px;
+        }
+
+        .filter-btn {
+            padding: 6px 12px;
+            border: 1px solid #e0e0e0;
+            background: white;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .filter-btn.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        /* Progress Ring */
+        .progress-ring {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            padding: 20px;
+        }
+
+        .ring-container {
+            position: relative;
+            width: 200px;
+            height: 200px;
+        }
+
+        .ring-value {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 36px;
+            font-weight: bold;
+            color: #1a1a2e;
+        }
+
+        .ring-label {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #666;
+            text-align: center;
+        }
+
+        /* Table */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .data-table th {
+            background: #f8f9fa;
+            padding: 12px;
+            text-align: left;
+            font-size: 12px;
+            font-weight: 600;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .data-table td {
+            padding: 12px;
+            border-top: 1px solid #e0e0e0;
+            font-size: 14px;
+        }
+
+        .data-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        /* Status badges */
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .status-badge.success {
+            background: #d4f4dd;
+            color: #27ae60;
+        }
+
+        .status-badge.warning {
+            background: #fff3cd;
+            color: #f39c12;
+        }
+
+        .status-badge.danger {
+            background: #f8d7da;
+            color: #e74c3c;
+        }
+
+        /* Actions */
         .actions-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
             gap: 15px;
             margin-top: 30px;
         }
@@ -311,16 +435,6 @@
             box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
         }
 
-        .action-icon {
-            font-size: 30px;
-            margin-bottom: 10px;
-        }
-
-        .action-title {
-            font-size: 14px;
-            font-weight: bold;
-        }
-
         /* Modal */
         .modal {
             display: none;
@@ -333,6 +447,7 @@
             z-index: 1000;
             align-items: center;
             justify-content: center;
+            animation: fadeIn 0.3s ease;
         }
 
         .modal-content {
@@ -343,18 +458,7 @@
             max-width: 500px;
             max-height: 80vh;
             overflow-y: auto;
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .modal-header h3 {
-            font-size: 20px;
-            color: #1a1a2e;
+            animation: slideUp 0.3s ease;
         }
 
         .close-modal {
@@ -367,29 +471,24 @@
 
         /* Responsive */
         @media (max-width: 768px) {
-            .stats-grid {
+            .charts-grid {
                 grid-template-columns: 1fr;
             }
             
-            .header h1 {
-                font-size: 18px;
-            }
-            
-            .user-badge {
-                font-size: 12px;
-                padding: 6px 12px;
+            .kpi-grid {
+                grid-template-columns: 1fr;
             }
         }
 
-        /* Loading Animation */
-        .loading {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
+        /* Spinner */
+        .spinner {
             border: 3px solid #f3f3f3;
             border-top: 3px solid #667eea;
             border-radius: 50%;
+            width: 40px;
+            height: 40px;
             animation: spin 1s linear infinite;
+            margin: 20px auto;
         }
 
         @keyframes spin {
@@ -397,23 +496,15 @@
             100% { transform: rotate(360deg); }
         }
 
-        /* Success Message */
-        .success-msg {
-            background: #27ae60;
-            color: white;
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            display: none;
+        /* Success Animation */
+        .success-animation {
+            animation: successPulse 0.5s ease;
         }
 
-        .error-msg {
-            background: #e74c3c;
-            color: white;
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            display: none;
+        @keyframes successPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
         }
     </style>
 </head>
@@ -424,7 +515,7 @@
             <div class="login-header">
                 <div class="logo">🍄</div>
                 <h1>MYCOMYSTICISM</h1>
-                <p>Система Управления Духовным Развитием</p>
+                <p>Advanced Analytics Portal</p>
             </div>
             
             <form id="loginForm">
@@ -438,29 +529,19 @@
                     <input type="password" id="password" placeholder="Введите пароль" required>
                 </div>
                 
-                <button type="submit" class="btn">
-                    <span id="loginBtnText">Войти в систему</span>
-                    <span id="loginLoader" class="loading" style="display: none;"></span>
-                </button>
+                <button type="submit" class="btn">Войти в систему</button>
             </form>
-            
-            <div class="form-footer">
-                Нет аккаунта? <a href="#" onclick="showRegister()">Зарегистрироваться</a>
-            </div>
         </div>
     </div>
 
-    <!-- Dashboard Page -->
+    <!-- Dashboard -->
     <div id="dashboard">
         <div class="container">
             <div class="dashboard-container">
                 <!-- Header -->
                 <div class="header">
                     <div class="header-content">
-                        <h1>
-                            <span style="font-size: 30px;">🍄</span>
-                            MYCOMYSTICISM Portal
-                        </h1>
+                        <h1>🍄 MYCOMYSTICISM Analytics</h1>
                         <div class="user-info">
                             <div class="user-badge">
                                 <span>👤</span>
@@ -470,115 +551,158 @@
                                 <span>🔥</span>
                                 <span id="userLevelDisplay">Level 3</span>
                             </div>
-                            <button class="logout-btn" onclick="logout()">
-                                Выйти
-                            </button>
+                            <button class="logout-btn" onclick="logout()">Выйти</button>
                         </div>
                     </div>
                 </div>
 
                 <!-- Dashboard Content -->
                 <div class="dashboard-content">
-                    <!-- Success/Error Messages -->
-                    <div id="successMsg" class="success-msg"></div>
-                    <div id="errorMsg" class="error-msg"></div>
-
-                    <!-- Stats Grid -->
-                    <div class="stats-grid">
-                        <div class="stat-card">
-                            <div class="stat-icon">💰</div>
-                            <div class="stat-label">Общий доход</div>
-                            <div class="stat-value" id="totalIncome">$0</div>
-                            <div class="stat-progress">Цель: $6,400,000</div>
-                        </div>
-                        
-                        <div class="stat-card">
-                            <div class="stat-icon">🎯</div>
-                            <div class="stat-label">Ретриты</div>
-                            <div class="stat-value" id="totalRetreats">0</div>
-                            <div class="stat-progress">Цель: 100</div>
-                        </div>
-                        
-                        <div class="stat-card">
-                            <div class="stat-icon">👥</div>
-                            <div class="stat-label">Ученики</div>
-                            <div class="stat-value" id="totalStudents">0</div>
-                            <div class="stat-progress">Цель: 64</div>
-                        </div>
-                        
-                        <div class="stat-card">
-                            <div class="stat-icon">💳</div>
-                            <div class="stat-label">Десятина</div>
-                            <div class="stat-value" id="totalTithe">$0</div>
-                            <div class="stat-progress">20% от дохода</div>
-                        </div>
-                    </div>
-
-                    <!-- Progress Section -->
-                    <div class="progress-section">
-                        <h3>📈 Прогресс к Level 4 (Верховный Жрец)</h3>
-                        
-                        <div class="progress-item">
-                            <div class="progress-header">
-                                <span>Доход</span>
-                                <span id="incomeProgress">$0 / $6,400,000</span>
-                            </div>
-                            <div class="progress-bar-container">
-                                <div class="progress-bar" id="incomeBar" style="width: 0%;">0%</div>
+                    <!-- KPI Cards -->
+                    <div class="kpi-grid">
+                        <div class="kpi-card">
+                            <div class="kpi-icon">💰</div>
+                            <div class="kpi-label">Общий доход</div>
+                            <div class="kpi-value" id="totalIncome">$0</div>
+                            <div class="kpi-change positive">
+                                <span>↑</span>
+                                <span id="incomeChange">+0%</span>
+                                <span>vs прошлый месяц</span>
                             </div>
                         </div>
                         
-                        <div class="progress-item">
-                            <div class="progress-header">
-                                <span>Ретриты</span>
-                                <span id="retreatsProgress">0 / 100</span>
-                            </div>
-                            <div class="progress-bar-container">
-                                <div class="progress-bar" id="retreatsBar" style="width: 0%;">0%</div>
+                        <div class="kpi-card">
+                            <div class="kpi-icon">🎯</div>
+                            <div class="kpi-label">Ретриты</div>
+                            <div class="kpi-value" id="totalRetreats">0</div>
+                            <div class="kpi-change positive">
+                                <span>↑</span>
+                                <span id="retreatsChange">+0</span>
+                                <span>в этом месяце</span>
                             </div>
                         </div>
                         
-                        <div class="progress-item">
-                            <div class="progress-header">
-                                <span>Ученики</span>
-                                <span id="studentsProgress">0 / 64</span>
+                        <div class="kpi-card">
+                            <div class="kpi-icon">👥</div>
+                            <div class="kpi-label">Ученики</div>
+                            <div class="kpi-value" id="totalStudents">0</div>
+                            <div class="kpi-change positive">
+                                <span>↑</span>
+                                <span id="studentsChange">+0</span>
+                                <span>новых учеников</span>
                             </div>
-                            <div class="progress-bar-container">
-                                <div class="progress-bar" id="studentsBar" style="width: 0%;">0%</div>
+                        </div>
+                        
+                        <div class="kpi-card">
+                            <div class="kpi-icon">📈</div>
+                            <div class="kpi-label">Прогресс к Level 4</div>
+                            <div class="kpi-value" id="overallProgress">0%</div>
+                            <div class="kpi-change positive">
+                                <span>⏱</span>
+                                <span id="timeToLevel">~12 месяцев</span>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Action Cards -->
+                    <!-- Charts Grid -->
+                    <div class="charts-grid">
+                        <!-- Income Chart -->
+                        <div class="chart-container">
+                            <div class="chart-header">
+                                <h3 class="chart-title">💰 Динамика дохода</h3>
+                                <div class="chart-filters">
+                                    <button class="filter-btn active" onclick="updateIncomeChart('6m')">6М</button>
+                                    <button class="filter-btn" onclick="updateIncomeChart('1y')">1Г</button>
+                                    <button class="filter-btn" onclick="updateIncomeChart('all')">Всё</button>
+                                </div>
+                            </div>
+                            <canvas id="incomeChart"></canvas>
+                        </div>
+                        
+                        <!-- Progress Donut -->
+                        <div class="chart-container">
+                            <div class="chart-header">
+                                <h3 class="chart-title">🎯 Прогресс по метрикам</h3>
+                            </div>
+                            <canvas id="progressChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Additional Charts -->
+                    <div class="charts-grid">
+                        <!-- Students Growth -->
+                        <div class="chart-container">
+                            <div class="chart-header">
+                                <h3 class="chart-title">👥 Рост учеников</h3>
+                            </div>
+                            <canvas id="studentsChart"></canvas>
+                        </div>
+                        
+                        <!-- Retreats Distribution -->
+                        <div class="chart-container">
+                            <div class="chart-header">
+                                <h3 class="chart-title">🏕️ Типы ретритов</h3>
+                            </div>
+                            <canvas id="retreatsChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Tithe Analysis -->
+                    <div class="chart-container">
+                        <div class="chart-header">
+                            <h3 class="chart-title">💳 Анализ десятины</h3>
+                        </div>
+                        <canvas id="titheChart"></canvas>
+                    </div>
+
+                    <!-- Recent Activity Table -->
+                    <div class="chart-container">
+                        <div class="chart-header">
+                            <h3 class="chart-title">📊 Последняя активность</h3>
+                        </div>
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Дата</th>
+                                    <th>Тип</th>
+                                    <th>Описание</th>
+                                    <th>Сумма</th>
+                                    <th>Статус</th>
+                                </tr>
+                            </thead>
+                            <tbody id="activityTable">
+                                <tr>
+                                    <td colspan="5" style="text-align: center; color: #999;">Нет данных</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Actions -->
                     <div class="actions-grid">
                         <div class="action-card" onclick="showModal('income')">
-                            <div class="action-icon">💰</div>
-                            <div class="action-title">Добавить доход</div>
+                            <div>💰</div>
+                            <div>Добавить доход</div>
                         </div>
-                        
                         <div class="action-card" onclick="showModal('retreat')">
-                            <div class="action-icon">🎯</div>
-                            <div class="action-title">Новый ретрит</div>
+                            <div>🎯</div>
+                            <div>Новый ретрит</div>
                         </div>
-                        
                         <div class="action-card" onclick="showModal('student')">
-                            <div class="action-icon">👥</div>
-                            <div class="action-title">Добавить ученика</div>
+                            <div>👥</div>
+                            <div>Добавить ученика</div>
                         </div>
-                        
                         <div class="action-card" onclick="showModal('tithe')">
-                            <div class="action-icon">💳</div>
-                            <div class="action-title">Оплатить десятину</div>
+                            <div>💳</div>
+                            <div>Оплатить десятину</div>
                         </div>
-                        
-                        <div class="action-card" onclick="showModal('report')">
-                            <div class="action-icon">📊</div>
-                            <div class="action-title">Месячный отчёт</div>
+                        <div class="action-card" onclick="generateReport()">
+                            <div>📈</div>
+                            <div>Создать отчёт</div>
                         </div>
-                        
                         <div class="action-card" onclick="exportData()">
-                            <div class="action-icon">📥</div>
-                            <div class="action-title">Экспорт данных</div>
+                            <div>📥</div>
+                            <div>Экспорт данных</div>
                         </div>
                     </div>
                 </div>
@@ -589,138 +713,413 @@
     <!-- Modal -->
     <div id="modal" class="modal">
         <div class="modal-content">
-            <div class="modal-header">
+            <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                 <h3 id="modalTitle">Заголовок</h3>
                 <button class="close-modal" onclick="closeModal()">&times;</button>
             </div>
-            <div id="modalBody">
-                <!-- Dynamic content -->
-            </div>
+            <div id="modalBody"></div>
         </div>
     </div>
 
     <script>
         // Data Storage
-        const STORAGE_KEY = 'mycomysticism_data';
+        const STORAGE_KEY = 'mycomysticism_advanced';
         
-        // Initialize or get data
+        // Chart instances
+        let incomeChartInstance = null;
+        let progressChartInstance = null;
+        let studentsChartInstance = null;
+        let retreatsChartInstance = null;
+        let titheChartInstance = null;
+        
+        // Initialize data
         function getData() {
             const data = localStorage.getItem(STORAGE_KEY);
             if (data) {
                 return JSON.parse(data);
             }
+            
+            // Default data with history
             return {
                 users: {
                     'PD7921': {
                         password: '123456',
                         level: 3,
                         levelName: 'Жрец',
-                        income: 0,
-                        retreats: 0,
-                        students: 0,
-                        tithe: 0,
-                        history: []
+                        income: 1200000,
+                        retreats: 28,
+                        students: 24,
+                        tithe: 240000,
+                        monthlyIncome: [
+                            180000, 210000, 195000, 240000, 225000, 255000
+                        ],
+                        monthlyStudents: [
+                            18, 19, 20, 21, 23, 24
+                        ],
+                        retreatTypes: {
+                            paid: 14,
+                            free: 8,
+                            charity: 6
+                        },
+                        history: generateSampleHistory()
                     }
                 },
                 currentUser: null
             };
         }
         
+        function generateSampleHistory() {
+            const types = ['income', 'retreat', 'student', 'tithe'];
+            const history = [];
+            const now = new Date();
+            
+            for (let i = 0; i < 10; i++) {
+                const date = new Date(now - (i * 24 * 60 * 60 * 1000));
+                history.push({
+                    date: date.toISOString(),
+                    type: types[Math.floor(Math.random() * types.length)],
+                    description: `Активность ${i + 1}`,
+                    amount: Math.floor(Math.random() * 10000) + 1000,
+                    status: Math.random() > 0.3 ? 'completed' : 'pending'
+                });
+            }
+            
+            return history;
+        }
+        
         function saveData(data) {
             localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
         }
         
-        // Login Functions
+        // Login
         document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
             
             const userCode = document.getElementById('userCode').value.toUpperCase();
             const password = document.getElementById('password').value;
+            const data = getData();
             
-            // Show loading
-            document.getElementById('loginBtnText').style.display = 'none';
-            document.getElementById('loginLoader').style.display = 'inline-block';
-            
-            setTimeout(() => {
-                const data = getData();
-                
-                if (data.users[userCode] && data.users[userCode].password === password) {
-                    data.currentUser = userCode;
-                    saveData(data);
-                    showDashboard();
-                } else if (!data.users[userCode]) {
-                    // Auto-register new user
-                    data.users[userCode] = {
-                        password: password,
-                        level: 1,
-                        levelName: 'Подмастерье',
-                        income: 0,
-                        retreats: 0,
-                        students: 0,
-                        tithe: 0,
-                        history: []
-                    };
-                    data.currentUser = userCode;
-                    saveData(data);
-                    showDashboard();
-                    showSuccess('Аккаунт создан успешно!');
-                } else {
-                    alert('Неверный пароль!');
-                    document.getElementById('loginBtnText').style.display = 'inline';
-                    document.getElementById('loginLoader').style.display = 'none';
-                }
-            }, 1000);
+            if (data.users[userCode] && data.users[userCode].password === password) {
+                data.currentUser = userCode;
+                saveData(data);
+                showDashboard();
+            } else if (!data.users[userCode]) {
+                // Create new user
+                data.users[userCode] = {
+                    password: password,
+                    level: 1,
+                    levelName: 'Подмастерье',
+                    income: 0,
+                    retreats: 0,
+                    students: 0,
+                    tithe: 0,
+                    monthlyIncome: [0, 0, 0, 0, 0, 0],
+                    monthlyStudents: [0, 0, 0, 0, 0, 0],
+                    retreatTypes: { paid: 0, free: 0, charity: 0 },
+                    history: []
+                };
+                data.currentUser = userCode;
+                saveData(data);
+                showDashboard();
+            } else {
+                alert('Неверный пароль!');
+            }
         });
         
         function showDashboard() {
             document.getElementById('loginPage').style.display = 'none';
             document.getElementById('dashboard').style.display = 'block';
             updateDashboard();
+            initCharts();
         }
         
         function updateDashboard() {
             const data = getData();
             const user = data.users[data.currentUser];
             
-            // Update display
+            // Update KPIs
             document.getElementById('userCodeDisplay').textContent = data.currentUser;
             document.getElementById('userLevelDisplay').textContent = `Level ${user.level} - ${user.levelName}`;
-            
-            // Update stats
             document.getElementById('totalIncome').textContent = `$${user.income.toLocaleString()}`;
             document.getElementById('totalRetreats').textContent = user.retreats;
             document.getElementById('totalStudents').textContent = user.students;
-            document.getElementById('totalTithe').textContent = `$${user.tithe.toLocaleString()}`;
             
-            // Update progress bars
-            const incomePercent = Math.min((user.income / 6400000) * 100, 100);
-            const retreatsPercent = Math.min((user.retreats / 100) * 100, 100);
-            const studentsPercent = Math.min((user.students / 64) * 100, 100);
+            // Calculate overall progress
+            const incomeProgress = (user.income / 6400000) * 100;
+            const retreatsProgress = (user.retreats / 100) * 100;
+            const studentsProgress = (user.students / 64) * 100;
+            const overallProgress = Math.round((incomeProgress + retreatsProgress + studentsProgress) / 3);
             
-            document.getElementById('incomeProgress').textContent = `$${user.income.toLocaleString()} / $6,400,000`;
-            document.getElementById('incomeBar').style.width = incomePercent + '%';
-            document.getElementById('incomeBar').textContent = Math.round(incomePercent) + '%';
+            document.getElementById('overallProgress').textContent = overallProgress + '%';
             
-            document.getElementById('retreatsProgress').textContent = `${user.retreats} / 100`;
-            document.getElementById('retreatsBar').style.width = retreatsPercent + '%';
-            document.getElementById('retreatsBar').textContent = Math.round(retreatsPercent) + '%';
+            // Calculate changes
+            const lastMonthIncome = user.monthlyIncome[user.monthlyIncome.length - 2] || 0;
+            const thisMonthIncome = user.monthlyIncome[user.monthlyIncome.length - 1] || 0;
+            const incomeChangePercent = lastMonthIncome ? Math.round(((thisMonthIncome - lastMonthIncome) / lastMonthIncome) * 100) : 0;
             
-            document.getElementById('studentsProgress').textContent = `${user.students} / 64`;
-            document.getElementById('studentsBar').style.width = studentsPercent + '%';
-            document.getElementById('studentsBar').textContent = Math.round(studentsPercent) + '%';
+            document.getElementById('incomeChange').textContent = (incomeChangePercent >= 0 ? '+' : '') + incomeChangePercent + '%';
+            document.getElementById('retreatsChange').textContent = '+' + Math.floor(user.retreats / 6);
+            document.getElementById('studentsChange').textContent = '+' + Math.floor(user.students / 6);
+            
+            // Estimate time to next level
+            const monthsToLevel = Math.max(
+                Math.ceil((6400000 - user.income) / (thisMonthIncome || 100000)),
+                Math.ceil((100 - user.retreats) / 2),
+                Math.ceil((64 - user.students) / 2)
+            );
+            document.getElementById('timeToLevel').textContent = `~${monthsToLevel} месяцев`;
+            
+            // Update activity table
+            updateActivityTable(user.history);
         }
         
-        function logout() {
+        function initCharts() {
             const data = getData();
-            data.currentUser = null;
-            saveData(data);
+            const user = data.users[data.currentUser];
             
-            document.getElementById('loginPage').style.display = 'flex';
-            document.getElementById('dashboard').style.display = 'none';
-            document.getElementById('loginForm').reset();
+            // Income Chart (Line)
+            const incomeCtx = document.getElementById('incomeChart').getContext('2d');
+            incomeChartInstance = new Chart(incomeCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн'],
+                    datasets: [{
+                        label: 'Доход',
+                        data: user.monthlyIncome,
+                        borderColor: '#667eea',
+                        backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 5,
+                        pointBackgroundColor: '#667eea',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return '$' + context.parsed.y.toLocaleString();
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return '$' + (value / 1000) + 'K';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Progress Chart (Doughnut)
+            const progressCtx = document.getElementById('progressChart').getContext('2d');
+            progressChartInstance = new Chart(progressCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Доход', 'Ретриты', 'Ученики', 'Книги'],
+                    datasets: [{
+                        data: [
+                            Math.round((user.income / 6400000) * 100),
+                            Math.round((user.retreats / 100) * 100),
+                            Math.round((user.students / 64) * 100),
+                            40 // Books progress
+                        ],
+                        backgroundColor: ['#667eea', '#764ba2', '#f39c12', '#27ae60'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.label + ': ' + context.parsed + '%';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Students Chart (Bar)
+            const studentsCtx = document.getElementById('studentsChart').getContext('2d');
+            studentsChartInstance = new Chart(studentsCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн'],
+                    datasets: [{
+                        label: 'Ученики',
+                        data: user.monthlyStudents,
+                        backgroundColor: 'rgba(102, 126, 234, 0.7)',
+                        borderColor: '#667eea',
+                        borderWidth: 2,
+                        borderRadius: 5
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 5
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Retreats Chart (Pie)
+            const retreatsCtx = document.getElementById('retreatsChart').getContext('2d');
+            retreatsChartInstance = new Chart(retreatsCtx, {
+                type: 'pie',
+                data: {
+                    labels: ['Платные', 'Бесплатные', 'Благотворительные'],
+                    datasets: [{
+                        data: [user.retreatTypes.paid, user.retreatTypes.free, user.retreatTypes.charity],
+                        backgroundColor: ['#667eea', '#27ae60', '#f39c12'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+            
+            // Tithe Chart (Horizontal Bar)
+            const titheCtx = document.getElementById('titheChart').getContext('2d');
+            const titheDue = user.income * 0.2;
+            const tithePaid = user.tithe;
+            const titheRemaining = Math.max(0, titheDue - tithePaid);
+            
+            titheChartInstance = new Chart(titheCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Уплачено', 'К оплате', 'Общий долг'],
+                    datasets: [{
+                        label: 'Десятина',
+                        data: [tithePaid, titheRemaining, titheDue],
+                        backgroundColor: ['#27ae60', '#e74c3c', '#95a5a6'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return '$' + context.parsed.x.toLocaleString();
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return '$' + (value / 1000) + 'K';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
         }
         
-        // Modal Functions
+        function updateActivityTable(history) {
+            const tbody = document.getElementById('activityTable');
+            
+            if (!history || history.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: #999;">Нет данных</td></tr>';
+                return;
+            }
+            
+            const rows = history.slice(0, 5).map(item => {
+                const date = new Date(item.date).toLocaleDateString('ru-RU');
+                const typeIcons = {
+                    income: '💰',
+                    retreat: '🎯',
+                    student: '👥',
+                    tithe: '💳'
+                };
+                const statusClass = item.status === 'completed' ? 'success' : 'warning';
+                const statusText = item.status === 'completed' ? 'Завершено' : 'В процессе';
+                
+                return `
+                    <tr>
+                        <td>${date}</td>
+                        <td>${typeIcons[item.type]} ${item.type}</td>
+                        <td>${item.description}</td>
+                        <td>$${item.amount.toLocaleString()}</td>
+                        <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+                    </tr>
+                `;
+            }).join('');
+            
+            tbody.innerHTML = rows;
+        }
+        
+        function updateIncomeChart(period) {
+            // Update filter buttons
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Update chart data based on period
+            const data = getData();
+            const user = data.users[data.currentUser];
+            
+            let labels, dataPoints;
+            
+            if (period === '6m') {
+                labels = ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн'];
+                dataPoints = user.monthlyIncome;
+            } else if (period === '1y') {
+                labels = ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'];
+                dataPoints = [...user.monthlyIncome, 270000, 285000, 300000, 310000, 325000, 340000];
+            } else {
+                labels = ['2023 Q1', '2023 Q2', '2023 Q3', '2023 Q4', '2024 Q1', '2024 Q2', '2024 Q3', '2024 Q4', '2025 Q1', '2025 Q2'];
+                dataPoints = [150000, 200000, 250000, 300000, 400000, 500000, 600000, 800000, 900000, 1200000];
+            }
+            
+            incomeChartInstance.data.labels = labels;
+            incomeChartInstance.data.datasets[0].data = dataPoints;
+            incomeChartInstance.update();
+        }
+        
         function showModal(type) {
             const modal = document.getElementById('modal');
             const modalTitle = document.getElementById('modalTitle');
@@ -750,6 +1149,14 @@
                             <input type="text" id="retreatName" placeholder="Название ретрита" required>
                         </div>
                         <div class="form-group">
+                            <label>Тип</label>
+                            <select id="retreatType">
+                                <option value="paid">Платный</option>
+                                <option value="free">Бесплатный</option>
+                                <option value="charity">Благотворительный</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
                             <label>Участников</label>
                             <input type="number" id="retreatParticipants" placeholder="10" required>
                         </div>
@@ -772,6 +1179,15 @@
                             <label>Email</label>
                             <input type="email" id="studentEmail" placeholder="email@example.com" required>
                         </div>
+                        <div class="form-group">
+                            <label>Уровень</label>
+                            <select id="studentLevel">
+                                <option value="0.1">0.1 - Начальный Волонтёр</option>
+                                <option value="0.2">0.2 - Старший Волонтёр</option>
+                                <option value="1">1 - Подмастерье</option>
+                                <option value="2">2 - Проводник Маэстро</option>
+                            </select>
+                        </div>
                         <button class="btn" onclick="addStudent()">Добавить</button>
                     `;
                     break;
@@ -793,25 +1209,6 @@
                         <button class="btn" onclick="payTithe()">Оплатить</button>
                     `;
                     break;
-                    
-                case 'report':
-                    const data = getData();
-                    const user = data.users[data.currentUser];
-                    modalTitle.textContent = '📊 Месячный отчёт';
-                    modalBody.innerHTML = `
-                        <h4>Отчёт за ${new Date().toLocaleDateString('ru-RU', { month: 'long', year: 'numeric' })}</h4>
-                        <p><strong>Код:</strong> ${data.currentUser}</p>
-                        <p><strong>Уровень:</strong> ${user.level} - ${user.levelName}</p>
-                        <hr style="margin: 20px 0;">
-                        <p><strong>Доход:</strong> $${user.income.toLocaleString()}</p>
-                        <p><strong>Ретриты:</strong> ${user.retreats}</p>
-                        <p><strong>Ученики:</strong> ${user.students}</p>
-                        <p><strong>Десятина уплачена:</strong> $${user.tithe.toLocaleString()}</p>
-                        <p><strong>Десятина к оплате:</strong> $${Math.max(0, user.income * 0.2 - user.tithe).toLocaleString()}</p>
-                        <hr style="margin: 20px 0;">
-                        <button class="btn" onclick="closeModal()">Закрыть</button>
-                    `;
-                    break;
             }
             
             modal.style.display = 'flex';
@@ -821,57 +1218,74 @@
             document.getElementById('modal').style.display = 'none';
         }
         
-        // Add Functions
         function addIncome() {
             const amount = parseFloat(document.getElementById('incomeAmount').value);
             const desc = document.getElementById('incomeDesc').value;
             
             if (amount && desc) {
                 const data = getData();
-                data.users[data.currentUser].income += amount;
-                data.users[data.currentUser].history.push({
+                const user = data.users[data.currentUser];
+                
+                user.income += amount;
+                user.monthlyIncome[user.monthlyIncome.length - 1] += amount;
+                user.history.unshift({
                     type: 'income',
                     amount: amount,
                     description: desc,
-                    date: new Date().toISOString()
+                    date: new Date().toISOString(),
+                    status: 'completed'
                 });
+                
                 saveData(data);
                 updateDashboard();
+                updateCharts();
                 closeModal();
-                showSuccess('Доход добавлен успешно!');
+                
+                // Animate KPI card
+                document.querySelector('.kpi-card').classList.add('success-animation');
             }
         }
         
         function addRetreat() {
             const name = document.getElementById('retreatName').value;
+            const type = document.getElementById('retreatType').value;
             const participants = parseInt(document.getElementById('retreatParticipants').value);
             const income = parseFloat(document.getElementById('retreatIncome').value);
             
-            if (name && participants && income) {
+            if (name && participants && income >= 0) {
                 const data = getData();
-                data.users[data.currentUser].retreats += 1;
-                data.users[data.currentUser].income += income;
-                data.users[data.currentUser].history.push({
+                const user = data.users[data.currentUser];
+                
+                user.retreats += 1;
+                user.retreatTypes[type] += 1;
+                user.income += income;
+                user.monthlyIncome[user.monthlyIncome.length - 1] += income;
+                user.history.unshift({
                     type: 'retreat',
-                    name: name,
-                    participants: participants,
-                    income: income,
-                    date: new Date().toISOString()
+                    description: name,
+                    amount: income,
+                    date: new Date().toISOString(),
+                    status: 'completed'
                 });
+                
                 saveData(data);
                 updateDashboard();
+                updateCharts();
                 closeModal();
-                showSuccess('Ретрит добавлен успешно!');
             }
         }
         
         function addStudent() {
             const name = document.getElementById('studentName').value;
             const email = document.getElementById('studentEmail').value;
+            const level = document.getElementById('studentLevel').value;
             
             if (name && email) {
                 const data = getData();
-                data.users[data.currentUser].students += 1;
+                const user = data.users[data.currentUser];
+                
+                user.students += 1;
+                user.monthlyStudents[user.monthlyStudents.length - 1] += 1;
                 
                 // Generate student code
                 const initials = name.split(' ').map(n => n[0].toUpperCase()).join('');
@@ -879,17 +1293,18 @@
                 const random = Math.floor(Math.random() * 90 + 10);
                 const studentCode = initials + random + year;
                 
-                data.users[data.currentUser].history.push({
+                user.history.unshift({
                     type: 'student',
-                    name: name,
-                    email: email,
-                    code: studentCode,
-                    date: new Date().toISOString()
+                    description: `${name} (${studentCode})`,
+                    amount: 0,
+                    date: new Date().toISOString(),
+                    status: 'completed'
                 });
+                
                 saveData(data);
                 updateDashboard();
+                updateCharts();
                 closeModal();
-                showSuccess(`Ученик добавлен! Код: ${studentCode}`);
             }
         }
         
@@ -899,18 +1314,89 @@
             
             if (amount) {
                 const data = getData();
-                data.users[data.currentUser].tithe += amount;
-                data.users[data.currentUser].history.push({
+                const user = data.users[data.currentUser];
+                
+                user.tithe += amount;
+                user.history.unshift({
                     type: 'tithe',
+                    description: `Десятина - ${recipient === 'teacher' ? 'Наставнику' : 'Церкви'}`,
                     amount: amount,
-                    recipient: recipient,
-                    date: new Date().toISOString()
+                    date: new Date().toISOString(),
+                    status: 'completed'
                 });
+                
                 saveData(data);
                 updateDashboard();
+                updateCharts();
                 closeModal();
-                showSuccess('Десятина оплачена!');
             }
+        }
+        
+        function updateCharts() {
+            const data = getData();
+            const user = data.users[data.currentUser];
+            
+            // Update income chart
+            incomeChartInstance.data.datasets[0].data = user.monthlyIncome;
+            incomeChartInstance.update();
+            
+            // Update progress chart
+            progressChartInstance.data.datasets[0].data = [
+                Math.round((user.income / 6400000) * 100),
+                Math.round((user.retreats / 100) * 100),
+                Math.round((user.students / 64) * 100),
+                40
+            ];
+            progressChartInstance.update();
+            
+            // Update students chart
+            studentsChartInstance.data.datasets[0].data = user.monthlyStudents;
+            studentsChartInstance.update();
+            
+            // Update retreats chart
+            retreatsChartInstance.data.datasets[0].data = [
+                user.retreatTypes.paid,
+                user.retreatTypes.free,
+                user.retreatTypes.charity
+            ];
+            retreatsChartInstance.update();
+            
+            // Update tithe chart
+            const titheDue = user.income * 0.2;
+            const tithePaid = user.tithe;
+            const titheRemaining = Math.max(0, titheDue - tithePaid);
+            
+            titheChartInstance.data.datasets[0].data = [tithePaid, titheRemaining, titheDue];
+            titheChartInstance.update();
+        }
+        
+        function generateReport() {
+            const data = getData();
+            const user = data.users[data.currentUser];
+            
+            const report = `
+                📊 ОТЧЁТ MYCOMYSTICISM
+                =====================
+                Дата: ${new Date().toLocaleDateString('ru-RU')}
+                Пользователь: ${data.currentUser}
+                Уровень: ${user.level} - ${user.levelName}
+                
+                ФИНАНСЫ:
+                • Общий доход: $${user.income.toLocaleString()}
+                • Десятина уплачена: $${user.tithe.toLocaleString()}
+                • Десятина к оплате: $${Math.max(0, user.income * 0.2 - user.tithe).toLocaleString()}
+                
+                ДОСТИЖЕНИЯ:
+                • Ретриты проведено: ${user.retreats}
+                • Учеников обучено: ${user.students}
+                
+                ПРОГРЕСС К LEVEL 4:
+                • Доход: ${Math.round((user.income / 6400000) * 100)}%
+                • Ретриты: ${Math.round((user.retreats / 100) * 100)}%
+                • Ученики: ${Math.round((user.students / 64) * 100)}%
+            `;
+            
+            alert(report);
         }
         
         function exportData() {
@@ -931,24 +1417,19 @@
             linkElement.setAttribute('href', dataUri);
             linkElement.setAttribute('download', exportFileDefaultName);
             linkElement.click();
+        }
+        
+        function logout() {
+            const data = getData();
+            data.currentUser = null;
+            saveData(data);
             
-            showSuccess('Данные экспортированы!');
+            document.getElementById('loginPage').style.display = 'flex';
+            document.getElementById('dashboard').style.display = 'none';
+            document.getElementById('loginForm').reset();
         }
         
-        function showSuccess(message) {
-            const msg = document.getElementById('successMsg');
-            msg.textContent = message;
-            msg.style.display = 'block';
-            setTimeout(() => {
-                msg.style.display = 'none';
-            }, 3000);
-        }
-        
-        function showRegister() {
-            alert('Просто введите новый код и пароль - система автоматически создаст аккаунт!');
-        }
-        
-        // Check if user is logged in on load
+        // Check if logged in
         window.addEventListener('load', function() {
             const data = getData();
             if (data.currentUser) {
