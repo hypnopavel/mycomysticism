@@ -1,1 +1,968 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MYCOMYSTICISM - Spiritual Development Portal</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#667eea">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        /* Login Page */
+        .login-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .login-card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .login-header .logo {
+            font-size: 60px;
+            margin-bottom: 20px;
+        }
+
+        .login-header h1 {
+            font-size: 24px;
+            color: #1a1a2e;
+            margin-bottom: 10px;
+        }
+
+        .login-header p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .form-footer {
+            text-align: center;
+            margin-top: 20px;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .form-footer a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        /* Dashboard (hidden by default) */
+        #dashboard {
+            display: none;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .dashboard-container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: white;
+            padding: 30px;
+            position: relative;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-info {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .user-badge {
+            background: rgba(255,255,255,0.1);
+            padding: 8px 16px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            backdrop-filter: blur(10px);
+            font-size: 14px;
+        }
+
+        .logout-btn {
+            background: rgba(244, 67, 54, 0.2);
+            color: white;
+            border: 1px solid rgba(244, 67, 54, 0.5);
+            padding: 8px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+
+        .logout-btn:hover {
+            background: rgba(244, 67, 54, 0.3);
+        }
+
+        /* Dashboard Content */
+        .dashboard-content {
+            padding: 30px;
+            background: #f8f9fa;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+        }
+
+        .stat-icon {
+            font-size: 30px;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #1a1a2e;
+        }
+
+        .stat-progress {
+            font-size: 14px;
+            color: #667eea;
+            margin-top: 5px;
+        }
+
+        /* Progress Section */
+        .progress-section {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .progress-section h3 {
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: #1a1a2e;
+        }
+
+        .progress-item {
+            margin-bottom: 20px;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .progress-bar-container {
+            height: 25px;
+            background: #e0e0e0;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 12px;
+            transition: width 1s ease;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 10px;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        /* Actions Grid */
+        .actions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .action-card {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .action-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .action-icon {
+            font-size: 30px;
+            margin-bottom: 10px;
+        }
+
+        .action-title {
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-header h3 {
+            font-size: 20px;
+            color: #1a1a2e;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #666;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 18px;
+            }
+            
+            .user-badge {
+                font-size: 12px;
+                padding: 6px 12px;
+            }
+        }
+
+        /* Loading Animation */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Success Message */
+        .success-msg {
+            background: #27ae60;
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .error-msg {
+            background: #e74c3c;
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Page -->
+    <div id="loginPage" class="login-container">
+        <div class="login-card">
+            <div class="login-header">
+                <div class="logo">🍄</div>
+                <h1>MYCOMYSTICISM</h1>
+                <p>Система Управления Духовным Развитием</p>
+            </div>
+            
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="userCode">Код пользователя</label>
+                    <input type="text" id="userCode" placeholder="Например: PD7921" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Пароль</label>
+                    <input type="password" id="password" placeholder="Введите пароль" required>
+                </div>
+                
+                <button type="submit" class="btn">
+                    <span id="loginBtnText">Войти в систему</span>
+                    <span id="loginLoader" class="loading" style="display: none;"></span>
+                </button>
+            </form>
+            
+            <div class="form-footer">
+                Нет аккаунта? <a href="#" onclick="showRegister()">Зарегистрироваться</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard Page -->
+    <div id="dashboard">
+        <div class="container">
+            <div class="dashboard-container">
+                <!-- Header -->
+                <div class="header">
+                    <div class="header-content">
+                        <h1>
+                            <span style="font-size: 30px;">🍄</span>
+                            MYCOMYSTICISM Portal
+                        </h1>
+                        <div class="user-info">
+                            <div class="user-badge">
+                                <span>👤</span>
+                                <span id="userCodeDisplay">PD7921</span>
+                            </div>
+                            <div class="user-badge">
+                                <span>🔥</span>
+                                <span id="userLevelDisplay">Level 3</span>
+                            </div>
+                            <button class="logout-btn" onclick="logout()">
+                                Выйти
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dashboard Content -->
+                <div class="dashboard-content">
+                    <!-- Success/Error Messages -->
+                    <div id="successMsg" class="success-msg"></div>
+                    <div id="errorMsg" class="error-msg"></div>
+
+                    <!-- Stats Grid -->
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon">💰</div>
+                            <div class="stat-label">Общий доход</div>
+                            <div class="stat-value" id="totalIncome">$0</div>
+                            <div class="stat-progress">Цель: $6,400,000</div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-icon">🎯</div>
+                            <div class="stat-label">Ретриты</div>
+                            <div class="stat-value" id="totalRetreats">0</div>
+                            <div class="stat-progress">Цель: 100</div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-icon">👥</div>
+                            <div class="stat-label">Ученики</div>
+                            <div class="stat-value" id="totalStudents">0</div>
+                            <div class="stat-progress">Цель: 64</div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-icon">💳</div>
+                            <div class="stat-label">Десятина</div>
+                            <div class="stat-value" id="totalTithe">$0</div>
+                            <div class="stat-progress">20% от дохода</div>
+                        </div>
+                    </div>
+
+                    <!-- Progress Section -->
+                    <div class="progress-section">
+                        <h3>📈 Прогресс к Level 4 (Верховный Жрец)</h3>
+                        
+                        <div class="progress-item">
+                            <div class="progress-header">
+                                <span>Доход</span>
+                                <span id="incomeProgress">$0 / $6,400,000</span>
+                            </div>
+                            <div class="progress-bar-container">
+                                <div class="progress-bar" id="incomeBar" style="width: 0%;">0%</div>
+                            </div>
+                        </div>
+                        
+                        <div class="progress-item">
+                            <div class="progress-header">
+                                <span>Ретриты</span>
+                                <span id="retreatsProgress">0 / 100</span>
+                            </div>
+                            <div class="progress-bar-container">
+                                <div class="progress-bar" id="retreatsBar" style="width: 0%;">0%</div>
+                            </div>
+                        </div>
+                        
+                        <div class="progress-item">
+                            <div class="progress-header">
+                                <span>Ученики</span>
+                                <span id="studentsProgress">0 / 64</span>
+                            </div>
+                            <div class="progress-bar-container">
+                                <div class="progress-bar" id="studentsBar" style="width: 0%;">0%</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Action Cards -->
+                    <div class="actions-grid">
+                        <div class="action-card" onclick="showModal('income')">
+                            <div class="action-icon">💰</div>
+                            <div class="action-title">Добавить доход</div>
+                        </div>
+                        
+                        <div class="action-card" onclick="showModal('retreat')">
+                            <div class="action-icon">🎯</div>
+                            <div class="action-title">Новый ретрит</div>
+                        </div>
+                        
+                        <div class="action-card" onclick="showModal('student')">
+                            <div class="action-icon">👥</div>
+                            <div class="action-title">Добавить ученика</div>
+                        </div>
+                        
+                        <div class="action-card" onclick="showModal('tithe')">
+                            <div class="action-icon">💳</div>
+                            <div class="action-title">Оплатить десятину</div>
+                        </div>
+                        
+                        <div class="action-card" onclick="showModal('report')">
+                            <div class="action-icon">📊</div>
+                            <div class="action-title">Месячный отчёт</div>
+                        </div>
+                        
+                        <div class="action-card" onclick="exportData()">
+                            <div class="action-icon">📥</div>
+                            <div class="action-title">Экспорт данных</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Заголовок</h3>
+                <button class="close-modal" onclick="closeModal()">&times;</button>
+            </div>
+            <div id="modalBody">
+                <!-- Dynamic content -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Data Storage
+        const STORAGE_KEY = 'mycomysticism_data';
+        
+        // Initialize or get data
+        function getData() {
+            const data = localStorage.getItem(STORAGE_KEY);
+            if (data) {
+                return JSON.parse(data);
+            }
+            return {
+                users: {
+                    'PD7921': {
+                        password: '123456',
+                        level: 3,
+                        levelName: 'Жрец',
+                        income: 0,
+                        retreats: 0,
+                        students: 0,
+                        tithe: 0,
+                        history: []
+                    }
+                },
+                currentUser: null
+            };
+        }
+        
+        function saveData(data) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+        }
+        
+        // Login Functions
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const userCode = document.getElementById('userCode').value.toUpperCase();
+            const password = document.getElementById('password').value;
+            
+            // Show loading
+            document.getElementById('loginBtnText').style.display = 'none';
+            document.getElementById('loginLoader').style.display = 'inline-block';
+            
+            setTimeout(() => {
+                const data = getData();
+                
+                if (data.users[userCode] && data.users[userCode].password === password) {
+                    data.currentUser = userCode;
+                    saveData(data);
+                    showDashboard();
+                } else if (!data.users[userCode]) {
+                    // Auto-register new user
+                    data.users[userCode] = {
+                        password: password,
+                        level: 1,
+                        levelName: 'Подмастерье',
+                        income: 0,
+                        retreats: 0,
+                        students: 0,
+                        tithe: 0,
+                        history: []
+                    };
+                    data.currentUser = userCode;
+                    saveData(data);
+                    showDashboard();
+                    showSuccess('Аккаунт создан успешно!');
+                } else {
+                    alert('Неверный пароль!');
+                    document.getElementById('loginBtnText').style.display = 'inline';
+                    document.getElementById('loginLoader').style.display = 'none';
+                }
+            }, 1000);
+        });
+        
+        function showDashboard() {
+            document.getElementById('loginPage').style.display = 'none';
+            document.getElementById('dashboard').style.display = 'block';
+            updateDashboard();
+        }
+        
+        function updateDashboard() {
+            const data = getData();
+            const user = data.users[data.currentUser];
+            
+            // Update display
+            document.getElementById('userCodeDisplay').textContent = data.currentUser;
+            document.getElementById('userLevelDisplay').textContent = `Level ${user.level} - ${user.levelName}`;
+            
+            // Update stats
+            document.getElementById('totalIncome').textContent = `$${user.income.toLocaleString()}`;
+            document.getElementById('totalRetreats').textContent = user.retreats;
+            document.getElementById('totalStudents').textContent = user.students;
+            document.getElementById('totalTithe').textContent = `$${user.tithe.toLocaleString()}`;
+            
+            // Update progress bars
+            const incomePercent = Math.min((user.income / 6400000) * 100, 100);
+            const retreatsPercent = Math.min((user.retreats / 100) * 100, 100);
+            const studentsPercent = Math.min((user.students / 64) * 100, 100);
+            
+            document.getElementById('incomeProgress').textContent = `$${user.income.toLocaleString()} / $6,400,000`;
+            document.getElementById('incomeBar').style.width = incomePercent + '%';
+            document.getElementById('incomeBar').textContent = Math.round(incomePercent) + '%';
+            
+            document.getElementById('retreatsProgress').textContent = `${user.retreats} / 100`;
+            document.getElementById('retreatsBar').style.width = retreatsPercent + '%';
+            document.getElementById('retreatsBar').textContent = Math.round(retreatsPercent) + '%';
+            
+            document.getElementById('studentsProgress').textContent = `${user.students} / 64`;
+            document.getElementById('studentsBar').style.width = studentsPercent + '%';
+            document.getElementById('studentsBar').textContent = Math.round(studentsPercent) + '%';
+        }
+        
+        function logout() {
+            const data = getData();
+            data.currentUser = null;
+            saveData(data);
+            
+            document.getElementById('loginPage').style.display = 'flex';
+            document.getElementById('dashboard').style.display = 'none';
+            document.getElementById('loginForm').reset();
+        }
+        
+        // Modal Functions
+        function showModal(type) {
+            const modal = document.getElementById('modal');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalBody = document.getElementById('modalBody');
+            
+            switch(type) {
+                case 'income':
+                    modalTitle.textContent = '💰 Добавить доход';
+                    modalBody.innerHTML = `
+                        <div class="form-group">
+                            <label>Сумма (USD)</label>
+                            <input type="number" id="incomeAmount" placeholder="1000" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Описание</label>
+                            <input type="text" id="incomeDesc" placeholder="Ретрит, консультация..." required>
+                        </div>
+                        <button class="btn" onclick="addIncome()">Добавить</button>
+                    `;
+                    break;
+                    
+                case 'retreat':
+                    modalTitle.textContent = '🎯 Новый ретрит';
+                    modalBody.innerHTML = `
+                        <div class="form-group">
+                            <label>Название</label>
+                            <input type="text" id="retreatName" placeholder="Название ретрита" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Участников</label>
+                            <input type="number" id="retreatParticipants" placeholder="10" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Доход</label>
+                            <input type="number" id="retreatIncome" placeholder="5000" required>
+                        </div>
+                        <button class="btn" onclick="addRetreat()">Добавить</button>
+                    `;
+                    break;
+                    
+                case 'student':
+                    modalTitle.textContent = '👥 Добавить ученика';
+                    modalBody.innerHTML = `
+                        <div class="form-group">
+                            <label>Имя</label>
+                            <input type="text" id="studentName" placeholder="Имя Фамилия" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" id="studentEmail" placeholder="email@example.com" required>
+                        </div>
+                        <button class="btn" onclick="addStudent()">Добавить</button>
+                    `;
+                    break;
+                    
+                case 'tithe':
+                    modalTitle.textContent = '💳 Оплатить десятину';
+                    modalBody.innerHTML = `
+                        <div class="form-group">
+                            <label>Сумма (USD)</label>
+                            <input type="number" id="titheAmount" placeholder="1000" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Кому</label>
+                            <select id="titheRecipient">
+                                <option value="teacher">Наставнику (10%)</option>
+                                <option value="church">Церкви (10%)</option>
+                            </select>
+                        </div>
+                        <button class="btn" onclick="payTithe()">Оплатить</button>
+                    `;
+                    break;
+                    
+                case 'report':
+                    const data = getData();
+                    const user = data.users[data.currentUser];
+                    modalTitle.textContent = '📊 Месячный отчёт';
+                    modalBody.innerHTML = `
+                        <h4>Отчёт за ${new Date().toLocaleDateString('ru-RU', { month: 'long', year: 'numeric' })}</h4>
+                        <p><strong>Код:</strong> ${data.currentUser}</p>
+                        <p><strong>Уровень:</strong> ${user.level} - ${user.levelName}</p>
+                        <hr style="margin: 20px 0;">
+                        <p><strong>Доход:</strong> $${user.income.toLocaleString()}</p>
+                        <p><strong>Ретриты:</strong> ${user.retreats}</p>
+                        <p><strong>Ученики:</strong> ${user.students}</p>
+                        <p><strong>Десятина уплачена:</strong> $${user.tithe.toLocaleString()}</p>
+                        <p><strong>Десятина к оплате:</strong> $${Math.max(0, user.income * 0.2 - user.tithe).toLocaleString()}</p>
+                        <hr style="margin: 20px 0;">
+                        <button class="btn" onclick="closeModal()">Закрыть</button>
+                    `;
+                    break;
+            }
+            
+            modal.style.display = 'flex';
+        }
+        
+        function closeModal() {
+            document.getElementById('modal').style.display = 'none';
+        }
+        
+        // Add Functions
+        function addIncome() {
+            const amount = parseFloat(document.getElementById('incomeAmount').value);
+            const desc = document.getElementById('incomeDesc').value;
+            
+            if (amount && desc) {
+                const data = getData();
+                data.users[data.currentUser].income += amount;
+                data.users[data.currentUser].history.push({
+                    type: 'income',
+                    amount: amount,
+                    description: desc,
+                    date: new Date().toISOString()
+                });
+                saveData(data);
+                updateDashboard();
+                closeModal();
+                showSuccess('Доход добавлен успешно!');
+            }
+        }
+        
+        function addRetreat() {
+            const name = document.getElementById('retreatName').value;
+            const participants = parseInt(document.getElementById('retreatParticipants').value);
+            const income = parseFloat(document.getElementById('retreatIncome').value);
+            
+            if (name && participants && income) {
+                const data = getData();
+                data.users[data.currentUser].retreats += 1;
+                data.users[data.currentUser].income += income;
+                data.users[data.currentUser].history.push({
+                    type: 'retreat',
+                    name: name,
+                    participants: participants,
+                    income: income,
+                    date: new Date().toISOString()
+                });
+                saveData(data);
+                updateDashboard();
+                closeModal();
+                showSuccess('Ретрит добавлен успешно!');
+            }
+        }
+        
+        function addStudent() {
+            const name = document.getElementById('studentName').value;
+            const email = document.getElementById('studentEmail').value;
+            
+            if (name && email) {
+                const data = getData();
+                data.users[data.currentUser].students += 1;
+                
+                // Generate student code
+                const initials = name.split(' ').map(n => n[0].toUpperCase()).join('');
+                const year = new Date().getFullYear().toString().substr(-2);
+                const random = Math.floor(Math.random() * 90 + 10);
+                const studentCode = initials + random + year;
+                
+                data.users[data.currentUser].history.push({
+                    type: 'student',
+                    name: name,
+                    email: email,
+                    code: studentCode,
+                    date: new Date().toISOString()
+                });
+                saveData(data);
+                updateDashboard();
+                closeModal();
+                showSuccess(`Ученик добавлен! Код: ${studentCode}`);
+            }
+        }
+        
+        function payTithe() {
+            const amount = parseFloat(document.getElementById('titheAmount').value);
+            const recipient = document.getElementById('titheRecipient').value;
+            
+            if (amount) {
+                const data = getData();
+                data.users[data.currentUser].tithe += amount;
+                data.users[data.currentUser].history.push({
+                    type: 'tithe',
+                    amount: amount,
+                    recipient: recipient,
+                    date: new Date().toISOString()
+                });
+                saveData(data);
+                updateDashboard();
+                closeModal();
+                showSuccess('Десятина оплачена!');
+            }
+        }
+        
+        function exportData() {
+            const data = getData();
+            const user = data.users[data.currentUser];
+            const exportData = {
+                user: data.currentUser,
+                ...user,
+                exportDate: new Date().toISOString()
+            };
+            
+            const dataStr = JSON.stringify(exportData, null, 2);
+            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+            
+            const exportFileDefaultName = `mycomysticism_${data.currentUser}_${new Date().toISOString().split('T')[0]}.json`;
+            
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', exportFileDefaultName);
+            linkElement.click();
+            
+            showSuccess('Данные экспортированы!');
+        }
+        
+        function showSuccess(message) {
+            const msg = document.getElementById('successMsg');
+            msg.textContent = message;
+            msg.style.display = 'block';
+            setTimeout(() => {
+                msg.style.display = 'none';
+            }, 3000);
+        }
+        
+        function showRegister() {
+            alert('Просто введите новый код и пароль - система автоматически создаст аккаунт!');
+        }
+        
+        // Check if user is logged in on load
+        window.addEventListener('load', function() {
+            const data = getData();
+            if (data.currentUser) {
+                showDashboard();
+            }
+        });
+        
+        // Close modal on outside click
+        window.onclick = function(event) {
+            const modal = document.getElementById('modal');
+            if (event.target == modal) {
+                closeModal();
+            }
+        }
+    </script>
+</body>
+</html>
